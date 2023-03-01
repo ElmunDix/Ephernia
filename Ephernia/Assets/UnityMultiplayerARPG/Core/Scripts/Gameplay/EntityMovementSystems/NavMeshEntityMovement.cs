@@ -1,0 +1,554 @@
+﻿using LiteNetLib.Utils;
+using LiteNetLibManager;
+using UnityEngine;
+using UnityEngine.AI;
+
+namespace MultiplayerARPG
+{
+    [RequireComponent(typeof(NavMeshAgent))]
+    public class NavMeshEntityMovement : BaseNetworkedGameEntityComponent<BaseGameEntity>, IEntityMovementComponent
+    {
+        protected static readonly long lagBuffer = System.TimeSpan.TicksPerMillisecond * 200;
+        protected static readonly float lagBufferUnityTime = 0.2f;
+
+        [Header("Movement Settings")]
+        public ObstacleAvoidanceType obstacleAvoidanceWhileMoving = ObstacleAvoidanceType.MedQualityObstacleAvoidance;
+        public ObstacleAvoidanceType obstacleAvoidanceWhileStationary = ObstacleAvoidanceType.NoObstacleAvoidance;
+        public MovementSecure movementSecure = MovementSecure.NotSecure;
+
+        [Header("Networking Settings")]
+        public float snapThreshold = 5.0f;
+
+        public NavMeshAgent CacheNavMeshAgent { get; private set; }
+        public float StoppingDistance
+        {
+            get { return CacheNavMeshAgent.stoppingDistance; }
+        }
+        public MovementState MovementState { get; protected set; }
+        public ExtraMovementState ExtraMovementState { get; protected set; }
+        public DirectionVector2 Direction2D { get { return Vector2.down; } set { } }
+        public float CurrentMoveSpeed { get { return CacheNavMeshAgent.isStopped ? 0f : CacheNavMeshAgent.speed; } }
+
+        protected float lastServerValidateTransformTime;
+        protected float lastServerValidateTransformMoveSpeed;
+        protected long acceptedPositionTimestamp;
+        protected float yAngle;
+        protected float targetYAngle;
+        protected float yTurnSpeed;
+        protected bool lookRotationApplied;
+        protected EntityMovementInput oldInput;
+        protected EntityMovementInput currentInput;
+        protected ExtraMovementState tempExtraMovementState;
+        protected Vector3? inputDirection;
+        protected bool moveByDestination;
+        protected bool isTeleporting;
+        protected bool isServerWaitingTeleportConfirm;
+        protected bool isClientConfirmingTeleport;
+
+        public override void EntityAwake()
+        {
+            base.EntityAwake();
+            // Prepare nav mesh agent component
+            CacheNavMeshAgent = gameObject.GetOrAddComponent<NavMeshAgent>();
+            // Disable unused component
+            LiteNetLibTransform disablingComp = gameObject.GetComponent<LiteNetLibTransform>();
+            if (disablingComp != null)
+            {
+                Logging.LogWarning("NavMeshEntityMovement", "You can remove `LiteNetLibTransform` component from game entity, it's not being used anymore [" + name + "]");
+                disablingComp.enabled = false;
+            }
+            // Setup
+            yAngle = targetYAngle = CacheTransform.eulerAngles.y;
+            lookRotationApplied = true;
+            StopMoveFunction();
+        }
+
+        public override void ComponentOnEnable()
+        {
+            CacheNavMeshAgent.enabled = true;
+        }
+
+        public override void ComponentOnDisable()
+        {
+            CacheNavMeshAgent.enabled = false;
+        }
+
+        public void KeyMovement(Vector3 moveDirection, MovementState movementState)
+        {
+            if (!Entity.CanMove())
+                return;
+            if (moveDirection.sqrMagnitude <= 0)
+            {
+                inputDirection = null;
+                return;
+            }
+            if (CanPredictMovement())
+            {
+                // Always apply movement to owner client (it's client prediction for server auth movement)
+                inputDirection = moveDirection;
+                moveByDestination = false;
+                CacheNavMeshAgent.updatePosition = true;
+                CacheNavMeshAgent.updateRotation = false;
+                if (CacheNavMeshAgent.isOnNavMesh)
+                    CacheNavMeshAgent.isStopped = true;
+            }
+        }
+
+        public void PointClickMovement(Vector3 position)
+        {
+            if (!Entity.CanMove())
+                return;
+            if (CanPredictMovement())
+            {
+                // Always apply movement to owner client (it's client prediction for server auth movement)
+                SetMovePaths(position);
+            }
+        }
+
+        public void SetExtraMovementState(ExtraMovementState extraMovementState)
+        {
+            if (!Entity.CanMove())
+                return;
+            if (CanPredictMovement())
+            {
+                // Always apply movement to owner client (it's client prediction for server auth movement)
+                tempExtraMovementState = extraMovementState;
+            }
+        }
+
+        public void StopMove()
+        {
+            if (movementSecure == MovementSecure.ServerAuthoritative)
+            {
+                // Send movement input to server, then server will apply movement and sync transform to clients
+                this.SetInputStop(currentInput);
+            }
+            StopMoveFunction();
+        }
+
+        private void StopMoveFunction()
+        {
+            inputDirection = null;
+            moveByDestination = false;
+            CacheNavMeshAgent.updatePosition = false;
+            CacheNavMeshAgent.updateRotation = false;
+            if (CacheNavMeshAgent.isOnNavMesh)
+                CacheNavMeshAgent.isStopped = true;
+        }
+
+        public void SetLookRotation(Quaternion rotation)
+        {
+            if (!Entity.CanMove() || !Entity.CanTurn())
+                return;
+            if (CanPredictMovement())
+            {
+                // Always apply movement to owner client (it's client prediction for server auth movement)
+                targetYAngle = rotation.eulerAngles.y;
+                lookRotationApplied = false;
+            }
+        }
+
+        public Quaternion GetLookRotation()
+        {
+            return Quaternion.Euler(0f, CacheTransform.eulerAngles.y, 0f);
+        }
+
+        public void SetSmoothTurnSpeed(float turnDuration)
+        {
+            yTurnSpeed = turnDuration;
+        }
+
+        public float GetSmoothTurnSpeed()
+        {
+            return yTurnSpeed;
+        }
+
+        public void Teleport(Vector3 position, Quaternion rotation)
+        {
+            if (!IsServer)
+            {
+                Logging.LogWarning("NavMeshEntityMovement", "Teleport function shouldn't be called at client [" + name + "]");
+                return;
+            }
+            isTeleporting = true;
+            OnTeleport(position, rotation.eulerAngles.y);
+        }
+
+        public bool FindGroundedPosition(Vector3 fromPosition, float findDistance, out Vector3 result)
+        {
+            result = fromPosition;
+            NavMeshHit navHit;
+            if (NavMesh.SamplePosition(fromPosition, out navHit, findDistance, NavMesh.AllAreas))
+            {
+                result = navHit.position;
+                return true;
+            }
+            return false;
+        }
+
+        public override void EntityUpdate()
+        {
+            CacheNavMeshAgent.speed = Entity.GetMoveSpeed();
+            float deltaTime = Time.deltaTime;
+            bool isStationary = CacheNavMeshAgent.isStopped || CacheNavMeshAgent.remainingDistance <= CacheNavMeshAgent.stoppingDistance;
+            CacheNavMeshAgent.obstacleAvoidanceType = isStationary ? obstacleAvoidanceWhileStationary : obstacleAvoidanceWhileMoving;
+            if (CanPredictMovement())
+            {
+                if (inputDirection.HasValue)
+                {
+                    // Moving by WASD keys
+                    CacheNavMeshAgent.Move(inputDirection.Value * CacheNavMeshAgent.speed * deltaTime);
+                    //CacheNavMeshAgent.SetDestination(CacheTransform.position);
+                    MovementState = MovementState.Forward | MovementState.IsGrounded;
+                    // Turn character to destination
+                    if (lookRotationApplied && Entity.CanTurn())
+                        targetYAngle = Quaternion.LookRotation(inputDirection.Value).eulerAngles.y;
+                }
+                else
+                {
+                    // Moving by clicked position
+                    MovementState = (CacheNavMeshAgent.velocity.sqrMagnitude > 0f ? MovementState.Forward : MovementState.None) | MovementState.IsGrounded;
+                    // Turn character to destination
+                    if (lookRotationApplied && Entity.CanTurn() && CacheNavMeshAgent.velocity.sqrMagnitude > 0f)
+                        targetYAngle = Quaternion.LookRotation(CacheNavMeshAgent.velocity.normalized).eulerAngles.y;
+                }
+                // Update extra movement state
+                ExtraMovementState = this.ValidateExtraMovementState(MovementState, tempExtraMovementState);
+                // Set current input
+                currentInput = this.SetInputMovementState(currentInput, MovementState);
+                currentInput = this.SetInputExtraMovementState(currentInput, ExtraMovementState);
+                if (inputDirection.HasValue)
+                {
+                    currentInput = this.SetInputIsKeyMovement(currentInput, true);
+                    currentInput = this.SetInputPosition(currentInput, CacheTransform.position);
+                }
+                else if (moveByDestination)
+                {
+                    currentInput = this.SetInputIsKeyMovement(currentInput, false);
+                    currentInput = this.SetInputPosition(currentInput, CacheNavMeshAgent.destination);
+                }
+            }
+            else
+            {
+                // Update movement state
+                MovementState = (CacheNavMeshAgent.velocity.sqrMagnitude > 0 ? MovementState.Forward : MovementState.None) | MovementState.IsGrounded;
+            }
+            // Update rotating
+            if (yTurnSpeed <= 0f)
+                yAngle = targetYAngle;
+            else if (Mathf.Abs(yAngle - targetYAngle) > 1f)
+                yAngle = Mathf.LerpAngle(yAngle, targetYAngle, yTurnSpeed * deltaTime);
+            UpdateRotation();
+            lookRotationApplied = true;
+            currentInput = this.SetInputRotation(currentInput, CacheTransform.rotation);
+        }
+
+        private void UpdateRotation()
+        {
+            CacheTransform.eulerAngles = new Vector3(0f, yAngle, 0f);
+        }
+
+        private void SetMovePaths(Vector3 position)
+        {
+            if (!Entity.CanMove())
+                return;
+            inputDirection = null;
+            moveByDestination = true;
+            CacheNavMeshAgent.updatePosition = true;
+            CacheNavMeshAgent.updateRotation = false;
+            if (CacheNavMeshAgent.isOnNavMesh)
+            {
+                CacheNavMeshAgent.isStopped = false;
+                CacheNavMeshAgent.SetDestination(position);
+            }
+        }
+
+        public bool WriteClientState(NetDataWriter writer, out bool shouldSendReliably)
+        {
+            shouldSendReliably = false;
+            if (movementSecure == MovementSecure.NotSecure && IsOwnerClient && !IsServer)
+            {
+                // Sync transform from owner client to server (except it's both owner client and server)
+                if (isClientConfirmingTeleport)
+                {
+                    shouldSendReliably = true;
+                    MovementState |= MovementState.IsTeleport;
+                }
+                this.ClientWriteSyncTransform3D(writer);
+                isClientConfirmingTeleport = false;
+                return true;
+            }
+            if (movementSecure == MovementSecure.ServerAuthoritative && IsOwnerClient && !IsServer)
+            {
+                EntityMovementInputState inputState;
+                if (this.DifferInputEnoughToSend(oldInput, currentInput, out inputState) || isClientConfirmingTeleport)
+                {
+                    if (!currentInput.IsKeyMovement)
+                    {
+                        // Point click should be reliably
+                        shouldSendReliably = true;
+                    }
+                    if (isClientConfirmingTeleport)
+                    {
+                        shouldSendReliably = true;
+                        currentInput.MovementState |= MovementState.IsTeleport;
+                    }
+                    this.ClientWriteMovementInput3D(writer, inputState, currentInput.MovementState, currentInput.ExtraMovementState, currentInput.Position, currentInput.Rotation);
+                    isClientConfirmingTeleport = false;
+                    oldInput = currentInput;
+                    currentInput = null;
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public bool WriteServerState(NetDataWriter writer, out bool shouldSendReliably)
+        {
+            shouldSendReliably = false;
+            if (isTeleporting)
+            {
+                shouldSendReliably = true;
+                MovementState |= MovementState.IsTeleport;
+            }
+            else
+            {
+                MovementState &= ~MovementState.IsTeleport;
+            }
+            // Sync transform from server to all clients (include owner client)
+            this.ServerWriteSyncTransform3D(writer);
+            isTeleporting = false;
+            return true;
+        }
+
+        public void ReadClientStateAtServer(NetDataReader reader)
+        {
+            switch (movementSecure)
+            {
+                case MovementSecure.NotSecure:
+                    ReadSyncTransformAtServer(reader);
+                    break;
+                case MovementSecure.ServerAuthoritative:
+                    ReadMovementInputAtServer(reader);
+                    break;
+            }
+        }
+
+        public void ReadServerStateAtClient(NetDataReader reader)
+        {
+            if (IsServer)
+            {
+                // Don't read and apply transform, because it was done at server
+                return;
+            }
+            MovementState movementState;
+            ExtraMovementState extraMovementState;
+            Vector3 position;
+            float yAngle;
+            long timestamp;
+            reader.ReadSyncTransformMessage3D(out movementState, out extraMovementState, out position, out yAngle, out timestamp);
+            if (movementState.Has(MovementState.IsTeleport))
+            {
+                // Server requested to teleport
+                OnTeleport(position, yAngle);
+            }
+            else if (acceptedPositionTimestamp <= timestamp)
+            {
+                if (Vector3.Distance(position, CacheTransform.position) >= snapThreshold)
+                {
+                    // Snap character to the position if character is too far from the position
+                    if (movementSecure == MovementSecure.ServerAuthoritative || !IsOwnerClient)
+                    {
+                        CacheTransform.eulerAngles = new Vector3(0, yAngle, 0);
+                        CacheNavMeshAgent.Warp(position);
+                    }
+                    MovementState = movementState;
+                    ExtraMovementState = extraMovementState;
+                }
+                else if (!IsOwnerClient)
+                {
+                    targetYAngle = yAngle;
+                    yTurnSpeed = 1f / Time.fixedDeltaTime;
+                    SetMovePaths(position);
+                    MovementState = movementState;
+                    ExtraMovementState = extraMovementState;
+                }
+                acceptedPositionTimestamp = timestamp;
+            }
+        }
+
+        public void ReadMovementInputAtServer(NetDataReader reader)
+        {
+            if (IsOwnerClient)
+            {
+                // Don't read and apply inputs, because it was done (this is both owner client and server)
+                return;
+            }
+            if (movementSecure == MovementSecure.NotSecure)
+            {
+                // Movement handling at client, so don't read movement inputs from client (but have to read transform)
+                return;
+            }
+            if (!Entity.CanMove())
+                return;
+            EntityMovementInputState inputState;
+            MovementState movementState;
+            ExtraMovementState extraMovementState;
+            Vector3 position;
+            float yAngle;
+            long timestamp;
+            reader.ReadMovementInputMessage3D(out inputState, out movementState, out extraMovementState, out position, out yAngle, out timestamp);
+            if (movementState.Has(MovementState.IsTeleport))
+            {
+                // Teleport confirming from client
+                isServerWaitingTeleportConfirm = false;
+            }
+            if (isServerWaitingTeleportConfirm)
+            {
+                // Waiting for teleport confirming
+                return;
+            }
+            if (Mathf.Abs(timestamp - BaseGameNetworkManager.Singleton.ServerTimestamp) > lagBuffer)
+            {
+                // Timestamp is a lot difference to server's timestamp, player might try to hack a game or packet may corrupted occurring, so skip it
+                return;
+            }
+            if (acceptedPositionTimestamp <= timestamp)
+            {
+                if (!inputState.Has(EntityMovementInputState.IsStopped))
+                {
+                    tempExtraMovementState = extraMovementState;
+                    if (inputState.Has(EntityMovementInputState.PositionChanged))
+                    {
+                        SetMovePaths(position);
+                    }
+                    if (inputState.Has(EntityMovementInputState.RotationChanged))
+                    {
+                        if (IsClient)
+                        {
+                            targetYAngle = yAngle;
+                            yTurnSpeed = 1f / Time.fixedDeltaTime;
+                        }
+                        else
+                        {
+                            this.yAngle = targetYAngle = yAngle;
+                            UpdateRotation();
+                        }
+                    }
+                }
+                else
+                {
+                    StopMoveFunction();
+                }
+                acceptedPositionTimestamp = timestamp;
+            }
+        }
+
+        public void ReadSyncTransformAtServer(NetDataReader reader)
+        {
+            if (IsOwnerClient)
+            {
+                // Don't read and apply transform, because it was done (this is both owner client and server)
+                return;
+            }
+            if (movementSecure == MovementSecure.ServerAuthoritative)
+            {
+                // Movement handling at server, so don't read sync transform from client
+                return;
+            }
+            MovementState movementState;
+            ExtraMovementState extraMovementState;
+            Vector3 position;
+            float yAngle;
+            long timestamp;
+            reader.ReadSyncTransformMessage3D(out movementState, out extraMovementState, out position, out yAngle, out timestamp);
+            if (movementState.Has(MovementState.IsTeleport))
+            {
+                // Teleport confirming from client
+                isServerWaitingTeleportConfirm = false;
+            }
+            if (isServerWaitingTeleportConfirm)
+            {
+                // Waiting for teleport confirming
+                return;
+            }
+            if (Mathf.Abs(timestamp - BaseGameNetworkManager.Singleton.ServerTimestamp) > lagBuffer)
+            {
+                // Timestamp is a lot difference to server's timestamp, player might try to hack a game or packet may corrupted occurring, so skip it
+                return;
+            }
+            if (acceptedPositionTimestamp <= timestamp)
+            {
+                if (IsClient)
+                {
+                    targetYAngle = yAngle;
+                    yTurnSpeed = 1f / Time.fixedDeltaTime;
+                }
+                else
+                {
+                    this.yAngle = targetYAngle = yAngle;
+                    UpdateRotation();
+                }
+                MovementState = movementState;
+                ExtraMovementState = extraMovementState;
+                if (Vector3.Distance(position.GetXZ(), CacheTransform.position.GetXZ()) > 0.01f)
+                {
+                    if (!IsClient)
+                    {
+                        // If it's server only (not a host), set position follows the client immediately
+                        float currentTime = Time.unscaledTime;
+                        float t = currentTime - lastServerValidateTransformTime;
+                        float v = Entity.GetMoveSpeed();
+                        float s = (lastServerValidateTransformMoveSpeed * (t + lagBufferUnityTime)) + (v * t); // +`lagBufferUnityTime` as high ping buffer
+                        if (s < 0.001f)
+                            s = 0.001f;
+                        Vector3 oldPos = CacheTransform.position;
+                        Vector3 newPos = position;
+                        if (Vector3.Distance(oldPos, newPos) <= s)
+                        {
+                            // Allow to move to the position
+                            CacheNavMeshAgent.Warp(position);
+                        }
+                        else
+                        {
+                            // Client moves too fast, adjust it
+                            Vector3 dir = (newPos - oldPos).normalized;
+                            newPos = oldPos + (dir * s);
+                            CacheNavMeshAgent.Warp(position);
+                            // And also adjust client's position
+                            Teleport(newPos, Quaternion.Euler(0f, yAngle, 0f));
+                        }
+                        lastServerValidateTransformTime = currentTime;
+                        lastServerValidateTransformMoveSpeed = v;
+                    }
+                    else
+                    {
+                        // It's both server and client, translate position (it's a host so don't do speed hack validation)
+                        SetMovePaths(position);
+                    }
+                }
+                acceptedPositionTimestamp = timestamp;
+            }
+        }
+
+        protected virtual void OnTeleport(Vector3 position, float yAngle)
+        {
+            inputDirection = null;
+            moveByDestination = false;
+            CacheNavMeshAgent.Warp(position);
+            if (CacheNavMeshAgent.isOnNavMesh)
+                CacheNavMeshAgent.isStopped = true;
+            this.yAngle = targetYAngle = yAngle;
+            UpdateRotation();
+            if (IsServer && !IsOwnedByServer)
+                isServerWaitingTeleportConfirm = true;
+            if (!IsServer && IsOwnerClient)
+                isClientConfirmingTeleport = true;
+        }
+
+        public bool CanPredictMovement()
+        {
+            return Entity.IsOwnerClient || (Entity.IsOwnerClientOrOwnedByServer && movementSecure == MovementSecure.NotSecure) || (Entity.IsServer && movementSecure == MovementSecure.ServerAuthoritative);
+        }
+    }
+}
