@@ -94,8 +94,6 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 93c389fe9d40638469bffd9de26d31ba, type: 2}
   - {fileID: 11400000, guid: b64f816f68b7d6a42b7d3857a4b5d931, type: 2}
   - {fileID: 11400000, guid: 0a439d3c316c36f4cae03a253c8839d4, type: 2}
-  - {fileID: 11400000, guid: 0963afdd208056344a1ea27c592e1d03, type: 2}
-  - {fileID: 11400000, guid: 8c55fb3d3347be747be61f433fb4a843, type: 2}
   itemCraftFormulas:
   - {fileID: 11400000, guid: 4fa8022457399b045aa759a2adf444be, type: 2}
   - {fileID: 11400000, guid: f3bf4536f24588043986c153c1e7e430, type: 2}
@@ -146,6 +144,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: c0bba1d7b0967e3428404a9fc3211a7b, type: 2}
   - {fileID: 11400000, guid: 25f18d3131d816146b890611d9123df4, type: 2}
   - {fileID: 11400000, guid: 9336d482a0ee6ec42a3cc5d855bf7105, type: 2}
+  - {fileID: 11400000, guid: c036ac5144bfb36428bd9b2fa2a5ce2c, type: 2}
   - {fileID: 11400000, guid: 7082a6e38d055b6488ab9c67d95d3907, type: 2}
   - {fileID: 11400000, guid: 00144a2dd7250bb4ab60d49c66cc48f0, type: 2}
   - {fileID: 11400000, guid: dda02c5321170454e9c7eaab45f1a277, type: 2}
@@ -169,9 +168,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: ac04beb40ca9c70478d208fcfc254bea, type: 2}
   statusEffects: []
   playerCharacters:
-  - {fileID: 11400000, guid: 0122f68aff58f2a4e995208bf67f18ba, type: 2}
-  - {fileID: 11400000, guid: f924bc5e901d46141bb3c3ca9b6ef27a, type: 2}
   - {fileID: 11400000, guid: 8c31218a0e7c7604ea751e1a56a13a76, type: 2}
+  - {fileID: 11400000, guid: cf6edc4904d9d70438169ffc4f6b6f8c, type: 2}
   monsterCharacters:
   - {fileID: 11400000, guid: aeba3337cf294524f8e2902f87a7532d, type: 2}
   - {fileID: 11400000, guid: 1c730dbe51ce978429028abe63e1df91, type: 2}
