@@ -3,7 +3,14 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - PlayerTag
+  - MonsterTag
+  - NpcTag
+  - ItemDropTag
+  - BuildingTag
+  - HarvestableTag
+  - VehicleTag
   layers:
   - Default
   - TransparentFX
@@ -13,19 +20,19 @@ TagManager:
   - UI
   - 
   - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
+  - Character
+  - ItemDrop
+  - MiniMap
+  - WarpPortalOrSafeArea
+  - DamageEntity
+  - Building
+  - Harvestable
+  - CharacterUI
+  - Ragdoll
+  - Player
+  - Monster
+  - Npc
+  - Vehicle
   - 
   - 
   - 
@@ -40,4 +47,10 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Ground
+    uniqueID: 794791751
+    locked: 0
+  - name: Character
+    uniqueID: 3557845381
     locked: 0
