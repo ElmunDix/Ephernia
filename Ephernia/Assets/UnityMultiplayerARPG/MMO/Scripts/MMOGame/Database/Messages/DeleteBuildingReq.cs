@@ -2,11 +2,8 @@
 
 namespace MultiplayerARPG.MMO
 {
-    public struct DeleteBuildingReq : INetSerializable
+    public partial struct DeleteBuildingReq : INetSerializable
     {
-        public string MapName { get; set; }
-        public string BuildingId { get; set; }
-
         public void Deserialize(NetDataReader reader)
         {
             MapName = reader.GetString();

@@ -2,11 +2,8 @@
 
 namespace MultiplayerARPG.MMO
 {
-    public struct UpdatePartyLeaderReq : INetSerializable
+    public partial struct UpdatePartyLeaderReq : INetSerializable
     {
-        public int PartyId { get; set; }
-        public string LeaderCharacterId { get; set; }
-
         public void Deserialize(NetDataReader reader)
         {
             PartyId = reader.GetInt();

@@ -2,10 +2,8 @@
 
 namespace MultiplayerARPG.MMO
 {
-    public struct UpdateDeleteMailStateResp : INetSerializable
+    public partial struct UpdateDeleteMailStateResp : INetSerializable
     {
-        public UITextKeys Error { get; set; }
-
         public void Deserialize(NetDataReader reader)
         {
             Error = (UITextKeys)reader.GetByte();

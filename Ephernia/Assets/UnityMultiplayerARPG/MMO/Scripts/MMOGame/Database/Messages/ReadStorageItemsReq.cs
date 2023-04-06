@@ -2,12 +2,8 @@
 
 namespace MultiplayerARPG.MMO
 {
-    public struct ReadStorageItemsReq : INetSerializable
+    public partial struct ReadStorageItemsReq : INetSerializable
     {
-        public StorageType StorageType { get; set; }
-        public string StorageOwnerId { get; set; }
-        public bool ReadForUpdate { get; set; }
-
         public void Deserialize(NetDataReader reader)
         {
             StorageType = (StorageType)reader.GetByte();

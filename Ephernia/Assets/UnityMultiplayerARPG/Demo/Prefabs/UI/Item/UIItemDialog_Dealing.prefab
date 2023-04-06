@@ -1,5 +1,101 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &726016154802788736
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6543477592637474886}
+  - component: {fileID: 3494654848217675399}
+  - component: {fileID: 729863677204031135}
+  m_Layer: 5
+  m_Name: Items
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &6543477592637474886
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 726016154802788736}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 5601382652499288733}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &3494654848217675399
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 726016154802788736}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a8695521f0d02e499659fee002a26c2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Padding:
+    m_Left: 0
+    m_Right: 0
+    m_Top: 0
+    m_Bottom: 0
+  m_ChildAlignment: 0
+  m_StartCorner: 0
+  m_StartAxis: 0
+  m_CellSize: {x: 30, y: 30}
+  m_Spacing: {x: 4, y: 4}
+  m_Constraint: 1
+  m_ConstraintCount: 5
+--- !u!114 &729863677204031135
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 726016154802788736}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 92153430f517cab49a77426727c8480f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hideOnAwake: 0
+  moveToLastSiblingOnShow: 0
+  root: {fileID: 726016154802788736}
+  onShow:
+    m_PersistentCalls:
+      m_Calls: []
+  onHide:
+    m_PersistentCalls:
+      m_Calls: []
+  onShowWithObject:
+    m_PersistentCalls:
+      m_Calls: []
+  onHideWithObject:
+    m_PersistentCalls:
+      m_Calls: []
+  filterCategories: []
+  filterItemTypes: 
+  doNotShowEmptySlots: 0
+  listEmptyObject: {fileID: 0}
+  uiDialog: {fileID: 0}
+  uiPrefab: {fileID: 114987847931839752, guid: 29d67c9a5f0b1624aa2cd269b4e59694, type: 3}
+  uiContainer: {fileID: 6543477592637474886}
+  inventoryType: 0
 --- !u!1 &2319281479551437829
 GameObject:
   m_ObjectHideFlags: 0
@@ -94,6 +190,467 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   unityText: {fileID: 7008749514960213602}
   textMeshText: {fileID: 0}
+--- !u!1 &2689310136314533490
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 565470457159916104}
+  - component: {fileID: 3950180155503249986}
+  - component: {fileID: 7469801855891270481}
+  - component: {fileID: 3045942256032616648}
+  m_Layer: 5
+  m_Name: TextBonus
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &565470457159916104
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2689310136314533490}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 5601382652499288733}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0, y: 0}
+--- !u!222 &3950180155503249986
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2689310136314533490}
+  m_CullTransparentMesh: 0
+--- !u!114 &7469801855891270481
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2689310136314533490}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_FontData:
+    m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
+    m_FontSize: 14
+    m_FontStyle: 0
+    m_BestFit: 0
+    m_MinSize: 1
+    m_MaxSize: 40
+    m_Alignment: 0
+    m_AlignByGeometry: 0
+    m_RichText: 1
+    m_HorizontalOverflow: 0
+    m_VerticalOverflow: 0
+    m_LineSpacing: 1
+  m_Text: Sockets
+--- !u!114 &3045942256032616648
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2689310136314533490}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d8355763b7cda344c9d206aa977ec27f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  unityText: {fileID: 7469801855891270481}
+  textMeshText: {fileID: 0}
+--- !u!1 &4061625170427104437
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5601382652499288733}
+  - component: {fileID: 224682989418982735}
+  - component: {fileID: 3682879080824006273}
+  m_Layer: 5
+  m_Name: EquipmentSockets
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &5601382652499288733
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4061625170427104437}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 6543477592637474886}
+  - {fileID: 565470457159916104}
+  m_Father: {fileID: 4617317026482200730}
+  m_RootOrder: 22
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &224682989418982735
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4061625170427104437}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 68ff676e6051d6d439342b143fe4d2a0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hideOnAwake: 0
+  moveToLastSiblingOnShow: 0
+  root: {fileID: 4061625170427104437}
+  onShow:
+    m_PersistentCalls:
+      m_Calls: []
+  onHide:
+    m_PersistentCalls:
+      m_Calls: []
+  onShowWithObject:
+    m_PersistentCalls:
+      m_Calls: []
+  onHideWithObject:
+    m_PersistentCalls:
+      m_Calls: []
+  objectSelected: {fileID: 0}
+  selectionManager: {fileID: 0}
+  updateUIRepeatRate: 0.5
+  formatKeyHpStats:
+    useCustomValue: 0
+    localeKey: 20
+    customKey: 
+    customValue: 
+  formatKeyHpRecoveryStats:
+    useCustomValue: 0
+    localeKey: 241
+    customKey: 
+    customValue: 
+  formatKeyHpLeechRateStats:
+    useCustomValue: 0
+    localeKey: 242
+    customKey: 
+    customValue: 
+  formatKeyMpStats:
+    useCustomValue: 0
+    localeKey: 21
+    customKey: 
+    customValue: 
+  formatKeyMpRecoveryStats:
+    useCustomValue: 0
+    localeKey: 243
+    customKey: 
+    customValue: 
+  formatKeyMpLeechRateStats:
+    useCustomValue: 0
+    localeKey: 244
+    customKey: 
+    customValue: 
+  formatKeyStaminaStats:
+    useCustomValue: 0
+    localeKey: 22
+    customKey: 
+    customValue: 
+  formatKeyStaminaRecoveryStats:
+    useCustomValue: 0
+    localeKey: 245
+    customKey: 
+    customValue: 
+  formatKeyStaminaLeechRateStats:
+    useCustomValue: 0
+    localeKey: 246
+    customKey: 
+    customValue: 
+  formatKeyFoodStats:
+    useCustomValue: 0
+    localeKey: 23
+    customKey: 
+    customValue: 
+  formatKeyWaterStats:
+    useCustomValue: 0
+    localeKey: 24
+    customKey: 
+    customValue: 
+  formatKeyAccuracyStats:
+    useCustomValue: 0
+    localeKey: 26
+    customKey: 
+    customValue: 
+  formatKeyEvasionStats:
+    useCustomValue: 0
+    localeKey: 27
+    customKey: 
+    customValue: 
+  formatKeyCriRateStats:
+    useCustomValue: 0
+    localeKey: 28
+    customKey: 
+    customValue: 
+  formatKeyCriDmgRateStats:
+    useCustomValue: 0
+    localeKey: 29
+    customKey: 
+    customValue: 
+  formatKeyBlockRateStats:
+    useCustomValue: 0
+    localeKey: 30
+    customKey: 
+    customValue: 
+  formatKeyBlockDmgRateStats:
+    useCustomValue: 0
+    localeKey: 31
+    customKey: 
+    customValue: 
+  formatKeyMoveSpeedStats:
+    useCustomValue: 0
+    localeKey: 32
+    customKey: 
+    customValue: 
+  formatKeyAtkSpeedStats:
+    useCustomValue: 0
+    localeKey: 33
+    customKey: 
+    customValue: 
+  formatKeyWeightLimitStats:
+    useCustomValue: 0
+    localeKey: 34
+    customKey: 
+    customValue: 
+  formatKeySlotLimitStats:
+    useCustomValue: 0
+    localeKey: 35
+    customKey: 
+    customValue: 
+  formatKeyGoldRateStats:
+    useCustomValue: 0
+    localeKey: 253
+    customKey: 
+    customValue: 
+  formatKeyExpRateStats:
+    useCustomValue: 0
+    localeKey: 254
+    customKey: 
+    customValue: 
+  formatKeyHpRateStats:
+    useCustomValue: 0
+    localeKey: 198
+    customKey: 
+    customValue: 
+  formatKeyHpRecoveryRateStats:
+    useCustomValue: 0
+    localeKey: 247
+    customKey: 
+    customValue: 
+  formatKeyHpLeechRateRateStats:
+    useCustomValue: 0
+    localeKey: 248
+    customKey: 
+    customValue: 
+  formatKeyMpRateStats:
+    useCustomValue: 0
+    localeKey: 199
+    customKey: 
+    customValue: 
+  formatKeyMpRecoveryRateStats:
+    useCustomValue: 0
+    localeKey: 249
+    customKey: 
+    customValue: 
+  formatKeyMpLeechRateRateStats:
+    useCustomValue: 0
+    localeKey: 250
+    customKey: 
+    customValue: 
+  formatKeyStaminaRateStats:
+    useCustomValue: 0
+    localeKey: 200
+    customKey: 
+    customValue: 
+  formatKeyStaminaRecoveryRateStats:
+    useCustomValue: 0
+    localeKey: 251
+    customKey: 
+    customValue: 
+  formatKeyStaminaLeechRateRateStats:
+    useCustomValue: 0
+    localeKey: 252
+    customKey: 
+    customValue: 
+  formatKeyFoodRateStats:
+    useCustomValue: 0
+    localeKey: 201
+    customKey: 
+    customValue: 
+  formatKeyWaterRateStats:
+    useCustomValue: 0
+    localeKey: 202
+    customKey: 
+    customValue: 
+  formatKeyAccuracyRateStats:
+    useCustomValue: 0
+    localeKey: 203
+    customKey: 
+    customValue: 
+  formatKeyEvasionRateStats:
+    useCustomValue: 0
+    localeKey: 204
+    customKey: 
+    customValue: 
+  formatKeyCriRateRateStats:
+    useCustomValue: 0
+    localeKey: 205
+    customKey: 
+    customValue: 
+  formatKeyCriDmgRateRateStats:
+    useCustomValue: 0
+    localeKey: 206
+    customKey: 
+    customValue: 
+  formatKeyBlockRateRateStats:
+    useCustomValue: 0
+    localeKey: 207
+    customKey: 
+    customValue: 
+  formatKeyBlockDmgRateRateStats:
+    useCustomValue: 0
+    localeKey: 208
+    customKey: 
+    customValue: 
+  formatKeyMoveSpeedRateStats:
+    useCustomValue: 0
+    localeKey: 209
+    customKey: 
+    customValue: 
+  formatKeyAtkSpeedRateStats:
+    useCustomValue: 0
+    localeKey: 210
+    customKey: 
+    customValue: 
+  formatKeyWeightLimitRateStats:
+    useCustomValue: 0
+    localeKey: 211
+    customKey: 
+    customValue: 
+  formatKeySlotLimitRateStats:
+    useCustomValue: 0
+    localeKey: 212
+    customKey: 
+    customValue: 
+  formatKeyGoldRateRateStats:
+    useCustomValue: 0
+    localeKey: 255
+    customKey: 
+    customValue: 
+  formatKeyExpRateRateStats:
+    useCustomValue: 0
+    localeKey: 256
+    customKey: 
+    customValue: 
+  formatKeyAttributeAmount:
+    useCustomValue: 0
+    localeKey: 78
+    customKey: 
+    customValue: 
+  formatKeyAttributeAmountRate:
+    useCustomValue: 0
+    localeKey: 213
+    customKey: 
+    customValue: 
+  formatKeyResistanceAmount:
+    useCustomValue: 0
+    localeKey: 79
+    customKey: 
+    customValue: 
+  formatKeyDamageAmount:
+    useCustomValue: 0
+    localeKey: 87
+    customKey: 
+    customValue: 
+  formatKeyArmorAmount:
+    useCustomValue: 0
+    localeKey: 197
+    customKey: 
+    customValue: 
+  formatKeySkillLevel:
+    useCustomValue: 0
+    localeKey: 82
+    customKey: 
+    customValue: 
+  uiTextAllBonus: {fileID: 3045942256032616648}
+  formatKeySocketFilled:
+    useCustomValue: 0
+    localeKey: 95
+    customKey: 
+    customValue: 
+  formatKeySocketEmpty:
+    useCustomValue: 0
+    localeKey: 96
+    customKey: 
+    customValue: 
+  uiAppliedSocketEnhancerItems: {fileID: 729863677204031135}
+--- !u!114 &3682879080824006273
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4061625170427104437}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 59f8146938fff824cb5fd77236b75775, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Padding:
+    m_Left: 0
+    m_Right: 0
+    m_Top: 0
+    m_Bottom: 0
+  m_ChildAlignment: 0
+  m_Spacing: 0
+  m_ChildForceExpandWidth: 1
+  m_ChildForceExpandHeight: 0
+  m_ChildControlWidth: 1
+  m_ChildControlHeight: 1
+  m_ChildScaleWidth: 0
+  m_ChildScaleHeight: 0
+  m_ReverseArrangement: 0
 --- !u!1 &4830538339725135070
 GameObject:
   m_ObjectHideFlags: 0
@@ -410,402 +967,6 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!1 &4830599920516999056
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 4618293502638553074}
-  - component: {fileID: 4800145780010121938}
-  - component: {fileID: 4620549535899216158}
-  - component: {fileID: 4799934268429751968}
-  - component: {fileID: 4799915289464210812}
-  m_Layer: 5
-  m_Name: EquipmentSockets
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!224 &4618293502638553074
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4830599920516999056}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.999996, y: 0.999996, z: 0.999996}
-  m_Children: []
-  m_Father: {fileID: 4617317026482200730}
-  m_RootOrder: 22
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
-  m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &4800145780010121938
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4830599920516999056}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 68ff676e6051d6d439342b143fe4d2a0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  hideOnAwake: 0
-  moveToLastSiblingOnShow: 0
-  root: {fileID: 4830599920516999056}
-  onShow:
-    m_PersistentCalls:
-      m_Calls: []
-  onHide:
-    m_PersistentCalls:
-      m_Calls: []
-  onShowWithObject:
-    m_PersistentCalls:
-      m_Calls: []
-  onHideWithObject:
-    m_PersistentCalls:
-      m_Calls: []
-  objectSelected: {fileID: 0}
-  selectionManager: {fileID: 0}
-  updateUIRepeatRate: 0.5
-  formatKeyHpStats:
-    useCustomValue: 0
-    localeKey: 20
-    customKey: 
-    customValue: 
-  formatKeyHpRecoveryStats:
-    useCustomValue: 0
-    localeKey: 241
-    customKey: 
-    customValue: 
-  formatKeyHpLeechRateStats:
-    useCustomValue: 0
-    localeKey: 242
-    customKey: 
-    customValue: 
-  formatKeyMpStats:
-    useCustomValue: 0
-    localeKey: 21
-    customKey: 
-    customValue: 
-  formatKeyMpRecoveryStats:
-    useCustomValue: 0
-    localeKey: 243
-    customKey: 
-    customValue: 
-  formatKeyMpLeechRateStats:
-    useCustomValue: 0
-    localeKey: 244
-    customKey: 
-    customValue: 
-  formatKeyStaminaStats:
-    useCustomValue: 0
-    localeKey: 22
-    customKey: 
-    customValue: 
-  formatKeyStaminaRecoveryStats:
-    useCustomValue: 0
-    localeKey: 245
-    customKey: 
-    customValue: 
-  formatKeyStaminaLeechRateStats:
-    useCustomValue: 0
-    localeKey: 246
-    customKey: 
-    customValue: 
-  formatKeyFoodStats:
-    useCustomValue: 0
-    localeKey: 23
-    customKey: 
-    customValue: 
-  formatKeyWaterStats:
-    useCustomValue: 0
-    localeKey: 24
-    customKey: 
-    customValue: 
-  formatKeyAccuracyStats:
-    useCustomValue: 0
-    localeKey: 26
-    customKey: 
-    customValue: 
-  formatKeyEvasionStats:
-    useCustomValue: 0
-    localeKey: 27
-    customKey: 
-    customValue: 
-  formatKeyCriRateStats:
-    useCustomValue: 0
-    localeKey: 28
-    customKey: 
-    customValue: 
-  formatKeyCriDmgRateStats:
-    useCustomValue: 0
-    localeKey: 29
-    customKey: 
-    customValue: 
-  formatKeyBlockRateStats:
-    useCustomValue: 0
-    localeKey: 30
-    customKey: 
-    customValue: 
-  formatKeyBlockDmgRateStats:
-    useCustomValue: 0
-    localeKey: 31
-    customKey: 
-    customValue: 
-  formatKeyMoveSpeedStats:
-    useCustomValue: 0
-    localeKey: 32
-    customKey: 
-    customValue: 
-  formatKeyAtkSpeedStats:
-    useCustomValue: 0
-    localeKey: 33
-    customKey: 
-    customValue: 
-  formatKeyWeightLimitStats:
-    useCustomValue: 0
-    localeKey: 34
-    customKey: 
-    customValue: 
-  formatKeySlotLimitStats:
-    useCustomValue: 0
-    localeKey: 35
-    customKey: 
-    customValue: 
-  formatKeyGoldRateStats:
-    useCustomValue: 0
-    localeKey: 253
-    customKey: 
-    customValue: 
-  formatKeyExpRateStats:
-    useCustomValue: 0
-    localeKey: 254
-    customKey: 
-    customValue: 
-  formatKeyHpRateStats:
-    useCustomValue: 0
-    localeKey: 198
-    customKey: 
-    customValue: 
-  formatKeyHpRecoveryRateStats:
-    useCustomValue: 0
-    localeKey: 247
-    customKey: 
-    customValue: 
-  formatKeyHpLeechRateRateStats:
-    useCustomValue: 0
-    localeKey: 248
-    customKey: 
-    customValue: 
-  formatKeyMpRateStats:
-    useCustomValue: 0
-    localeKey: 199
-    customKey: 
-    customValue: 
-  formatKeyMpRecoveryRateStats:
-    useCustomValue: 0
-    localeKey: 249
-    customKey: 
-    customValue: 
-  formatKeyMpLeechRateRateStats:
-    useCustomValue: 0
-    localeKey: 250
-    customKey: 
-    customValue: 
-  formatKeyStaminaRateStats:
-    useCustomValue: 0
-    localeKey: 200
-    customKey: 
-    customValue: 
-  formatKeyStaminaRecoveryRateStats:
-    useCustomValue: 0
-    localeKey: 251
-    customKey: 
-    customValue: 
-  formatKeyStaminaLeechRateRateStats:
-    useCustomValue: 0
-    localeKey: 252
-    customKey: 
-    customValue: 
-  formatKeyFoodRateStats:
-    useCustomValue: 0
-    localeKey: 201
-    customKey: 
-    customValue: 
-  formatKeyWaterRateStats:
-    useCustomValue: 0
-    localeKey: 202
-    customKey: 
-    customValue: 
-  formatKeyAccuracyRateStats:
-    useCustomValue: 0
-    localeKey: 203
-    customKey: 
-    customValue: 
-  formatKeyEvasionRateStats:
-    useCustomValue: 0
-    localeKey: 204
-    customKey: 
-    customValue: 
-  formatKeyCriRateRateStats:
-    useCustomValue: 0
-    localeKey: 205
-    customKey: 
-    customValue: 
-  formatKeyCriDmgRateRateStats:
-    useCustomValue: 0
-    localeKey: 206
-    customKey: 
-    customValue: 
-  formatKeyBlockRateRateStats:
-    useCustomValue: 0
-    localeKey: 207
-    customKey: 
-    customValue: 
-  formatKeyBlockDmgRateRateStats:
-    useCustomValue: 0
-    localeKey: 208
-    customKey: 
-    customValue: 
-  formatKeyMoveSpeedRateStats:
-    useCustomValue: 0
-    localeKey: 209
-    customKey: 
-    customValue: 
-  formatKeyAtkSpeedRateStats:
-    useCustomValue: 0
-    localeKey: 210
-    customKey: 
-    customValue: 
-  formatKeyWeightLimitRateStats:
-    useCustomValue: 0
-    localeKey: 211
-    customKey: 
-    customValue: 
-  formatKeySlotLimitRateStats:
-    useCustomValue: 0
-    localeKey: 212
-    customKey: 
-    customValue: 
-  formatKeyGoldRateRateStats:
-    useCustomValue: 0
-    localeKey: 255
-    customKey: 
-    customValue: 
-  formatKeyExpRateRateStats:
-    useCustomValue: 0
-    localeKey: 256
-    customKey: 
-    customValue: 
-  formatKeyAttributeAmount:
-    useCustomValue: 0
-    localeKey: 78
-    customKey: 
-    customValue: 
-  formatKeyAttributeAmountRate:
-    useCustomValue: 0
-    localeKey: 213
-    customKey: 
-    customValue: 
-  formatKeyResistanceAmount:
-    useCustomValue: 0
-    localeKey: 79
-    customKey: 
-    customValue: 
-  formatKeyDamageAmount:
-    useCustomValue: 0
-    localeKey: 87
-    customKey: 
-    customValue: 
-  formatKeyArmorAmount:
-    useCustomValue: 0
-    localeKey: 197
-    customKey: 
-    customValue: 
-  formatKeySkillLevel:
-    useCustomValue: 0
-    localeKey: 82
-    customKey: 
-    customValue: 
-  uiTextAllBonus: {fileID: 4799915289464210812}
-  formatKeySocketFilled:
-    useCustomValue: 0
-    localeKey: 95
-    customKey: 
-    customValue: 
-  formatKeySocketEmpty:
-    useCustomValue: 0
-    localeKey: 96
-    customKey: 
-    customValue: 
---- !u!222 &4620549535899216158
-CanvasRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4830599920516999056}
-  m_CullTransparentMesh: 0
---- !u!114 &4799934268429751968
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4830599920516999056}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Material: {fileID: 0}
-  m_Color: {r: 0.11764706, g: 0.11764706, b: 0.11764706, a: 1}
-  m_RaycastTarget: 1
-  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  m_Maskable: 1
-  m_OnCullStateChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  m_FontData:
-    m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
-    m_FontSize: 14
-    m_FontStyle: 0
-    m_BestFit: 0
-    m_MinSize: 10
-    m_MaxSize: 40
-    m_Alignment: 0
-    m_AlignByGeometry: 0
-    m_RichText: 1
-    m_HorizontalOverflow: 0
-    m_VerticalOverflow: 0
-    m_LineSpacing: 1
-  m_Text: <color=#800080ff>Equipment Sockets</color>
---- !u!114 &4799915289464210812
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4830599920516999056}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d8355763b7cda344c9d206aa977ec27f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  unityText: {fileID: 4799934268429751968}
-  textMeshText: {fileID: 0}
 --- !u!1 &4830606764452013644
 GameObject:
   m_ObjectHideFlags: 0
@@ -3437,7 +3598,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 4617692439986765940}
   m_Direction: 2
   m_Value: 1
-  m_Size: 0.8119658
+  m_Size: 0.8715596
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -3739,7 +3900,8 @@ MonoBehaviour:
   uiIncreaseDamages: {fileID: 4797153414771187678}
   uiIncreaseSkillLevels: {fileID: 4799956228596032896}
   uiEquipmentSet: {fileID: 4799766536292863090}
-  uiEquipmentSockets: {fileID: 4800145780010121938}
+  uiEquipmentSockets: {fileID: 224682989418982735}
+  uiItemRandomBonus: {fileID: 0}
   uiRefineItem: {fileID: 0}
   uiDismantleItem: {fileID: 0}
   uiRepairItem: {fileID: 0}
@@ -3855,6 +4017,7 @@ MonoBehaviour:
   showLevelAsDefault: 0
   dontAppendRefineLevelToTitle: 0
   dontShowComparingEquipments: 0
+  dontCalculateRandomBonus: 0
 --- !u!114 &6377495434842671642
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5517,7 +5680,7 @@ RectTransform:
   - {fileID: 8503627427130009992}
   - {fileID: 4617961150392351318}
   - {fileID: 4617494234248462326}
-  - {fileID: 4618293502638553074}
+  - {fileID: 5601382652499288733}
   m_Father: {fileID: 4617447182635081924}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -6268,12 +6431,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b8230d71f2e162f429cd091a6ee8188f, type: 3}
---- !u!224 &8503627427130009992 stripped
-RectTransform:
-  m_CorrespondingSourceObject: {fileID: 7088533233365464944, guid: b8230d71f2e162f429cd091a6ee8188f,
-    type: 3}
-  m_PrefabInstance: {fileID: 1467456030158282488}
-  m_PrefabAsset: {fileID: 0}
 --- !u!114 &8397989950588855572 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 6977997913292078060, guid: b8230d71f2e162f429cd091a6ee8188f,
@@ -6286,3 +6443,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ef6ef3575d589994f9a5a5bb281e0c7e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!224 &8503627427130009992 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 7088533233365464944, guid: b8230d71f2e162f429cd091a6ee8188f,
+    type: 3}
+  m_PrefabInstance: {fileID: 1467456030158282488}
+  m_PrefabAsset: {fileID: 0}

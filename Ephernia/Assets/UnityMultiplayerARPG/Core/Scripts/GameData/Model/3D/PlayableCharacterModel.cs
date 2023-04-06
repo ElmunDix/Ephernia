@@ -40,7 +40,7 @@ namespace MultiplayerARPG.GameData.Model.Playables
         public PlayableGraph Graph { get; protected set; }
         public AnimationPlayableBehaviour Template { get; protected set; }
         public AnimationPlayableBehaviour Behaviour { get; protected set; }
-        public float AwakenTime { get; protected set; }
+        public float SwitchedTime { get; protected set; }
 
         protected WeaponType equippedWeaponType = null;
         protected Coroutine actionCoroutine = null;
@@ -51,7 +51,7 @@ namespace MultiplayerARPG.GameData.Model.Playables
         protected override void Awake()
         {
             base.Awake();
-            AwakenTime = Time.unscaledTime;
+            SwitchedTime = Time.unscaledTime;
             if (animator == null)
                 animator = GetComponentInChildren<Animator>();
             Template = new AnimationPlayableBehaviour();
@@ -61,8 +61,8 @@ namespace MultiplayerARPG.GameData.Model.Playables
 
         protected virtual void Start()
         {
-            if (!IsMainModel)
-                Graph.Stop();
+            if (IsActiveModel)
+                Graph.Play();
         }
 
         public override void AddingNewModel(GameObject newModel, EquipmentContainer equipmentContainer)
@@ -93,7 +93,6 @@ namespace MultiplayerARPG.GameData.Model.Playables
             Behaviour = playable.GetBehaviour();
             AnimationPlayableOutput output = AnimationPlayableOutput.Create(Graph, "Output", animator);
             output.SetSourcePlayable(playable);
-            Graph.Play();
         }
 
         protected void DestroyGraph()
@@ -106,6 +105,11 @@ namespace MultiplayerARPG.GameData.Model.Playables
         {
             if (Graph.IsValid())
                 Graph.Stop();
+        }
+
+        internal override void OnSwitchingToThisModel()
+        {
+            SwitchedTime = Time.unscaledTime;
         }
 
         internal override void OnSwitchedToThisModel()
@@ -192,7 +196,15 @@ namespace MultiplayerARPG.GameData.Model.Playables
             else
             {
                 if (equipWeaponSet >= selectableWeaponSets.Count)
-                    equipWeaponSet = (byte)(selectableWeaponSets.Count - 1);
+                {
+                    // Issues occuring, so try to simulate data
+                    // Create a new list to make sure that changes won't be applied to the source list (the source list must be readonly)
+                    selectableWeaponSets = new List<EquipWeapons>(selectableWeaponSets);
+                    while (equipWeaponSet >= selectableWeaponSets.Count)
+                    {
+                        selectableWeaponSets.Add(new EquipWeapons());
+                    }
+                }
                 newEquipWeapons = selectableWeaponSets[equipWeaponSet];
             }
             // Get one equipped weapon from right-hand or left-hand
@@ -209,7 +221,7 @@ namespace MultiplayerARPG.GameData.Model.Playables
             // Player draw/holster animation
             if (oldEquipWeapons == null)
                 oldEquipWeapons = newEquipWeapons;
-            if (Time.unscaledTime - AwakenTime < 1f || !newEquipWeapons.IsDiffer(oldEquipWeapons, out bool rightIsDiffer, out bool leftIsDiffer))
+            if (Time.unscaledTime - SwitchedTime < 1f || !newEquipWeapons.IsDiffer(oldEquipWeapons, out bool rightIsDiffer, out bool leftIsDiffer))
             {
                 SetNewEquipWeapons(newEquipWeapons, selectableWeaponSets, equipWeaponSet, isWeaponsSheathed);
                 return;
@@ -620,7 +632,17 @@ namespace MultiplayerARPG.GameData.Model.Playables
                 return;
             if (isDoingAction)
                 return;
-            Behaviour.PlayAction(customAnimations[id], 1f);
+            if (customAnimations[id].clip != null)
+                Behaviour.PlayAction(customAnimations[id], 1f);
+        }
+
+        public AnimationClip GetCustomAnimationClip(int id)
+        {
+            if (id < 0 || id >= customAnimations.Length)
+                return null;
+            if (customAnimations[id].clip == null)
+                return null;
+            return customAnimations[id].clip;
         }
         #endregion
 

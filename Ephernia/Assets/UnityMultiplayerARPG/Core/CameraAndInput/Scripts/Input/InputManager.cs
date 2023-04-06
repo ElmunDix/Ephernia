@@ -12,11 +12,26 @@ public static class InputManager
     private static Dictionary<string, SimulateAxis> simulateAxis = new Dictionary<string, SimulateAxis>();
     public static bool useMobileInputOnNonMobile = false;
     public static bool useNonMobileInput = false;
+    internal static readonly Dictionary<int, GameObject> touchedPointerIds = new Dictionary<int, GameObject>();
+
+    private static int mobileInputLastDragFrame;
+    public static bool IsDraggingMobileInput
+    {
+        get
+        {
+            return Time.frameCount - mobileInputLastDragFrame <= 1;
+        }
+    }
 
 #if ENABLE_INPUT_SYSTEM
     private static HashSet<string> alreadyFindInputActionNames = new HashSet<string>();
     private static Dictionary<string, InputAction> foundInputActions = new Dictionary<string, InputAction>();
 #endif
+
+    public static void UpdateMobileInputDragging()
+    {
+        mobileInputLastDragFrame = Time.frameCount;
+    }
 
     public static bool HasInputSetting(string keyName)
     {

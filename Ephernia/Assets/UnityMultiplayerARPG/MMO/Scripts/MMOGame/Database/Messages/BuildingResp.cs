@@ -2,18 +2,16 @@
 
 namespace MultiplayerARPG.MMO
 {
-    public struct BuildingResp : INetSerializable
+    public partial struct BuildingResp : INetSerializable
     {
-        public BuildingSaveData BuildingData { get; set; }
-
         public void Deserialize(NetDataReader reader)
         {
-            BuildingData = reader.GetValue<BuildingSaveData>();
+            BuildingData = reader.Get(() => new BuildingSaveData());
         }
 
         public void Serialize(NetDataWriter writer)
         {
-            writer.PutValue(BuildingData);
+            writer.Put(BuildingData);
         }
     }
 }

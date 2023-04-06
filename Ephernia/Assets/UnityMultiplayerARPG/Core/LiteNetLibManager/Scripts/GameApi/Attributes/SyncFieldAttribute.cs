@@ -15,27 +15,23 @@ namespace LiteNetLibManager
         /// </summary>
         public DeliveryMethod deliveryMethod = DeliveryMethod.ReliableOrdered;
         /// <summary>
-        /// Sending data channel from clients to server (`syncMode` is `ClientMulticast` only)
+        /// Sending data channel from clients to server (while `syncMode` is `ClientMulticast` only)
         /// </summary>
         public byte clientDataChannel = 0;
         /// <summary>
-        /// Sending method type from clients to server (`syncMode` is `ClientMulticast` only)
+        /// Sending method type from clients to server (while `syncMode` is `ClientMulticast` only)
         /// </summary>
         public DeliveryMethod clientDeliveryMethod = DeliveryMethod.ReliableOrdered;
         /// <summary>
-        /// Interval to send network data (0.01f to 2f)
+        /// Interval to send network data
         /// </summary>
         public float sendInterval = 0.1f;
         /// <summary>
-        /// If this is `TRUE` it will syncing although no changes
+        /// How it will sync data. If always sync, it will sync data although it has no changes. If don't sync initial data immediately, it will not sync initial data immdediately with networked object spawning message, it will sync later after spanwed. If don't sync update, it will not sync when data has changes.
         /// </summary>
-        public bool alwaysSync = false;
+        public LiteNetLibSyncField.SyncBehaviour syncBehaviour = LiteNetLibSyncField.SyncBehaviour.Default;
         /// <summary>
-        /// If this is `TRUE` it will not sync initial data immdediately with spawn message (it will sync later)
-        /// </summary>
-        public bool doNotSyncInitialDataImmediately = false;
-        /// <summary>
-        /// How data changes handle and sync
+        /// Who can sync data and sync to whom
         /// </summary>
         public LiteNetLibSyncField.SyncMode syncMode = LiteNetLibSyncField.SyncMode.ServerToClients;
         /// <summary>

@@ -504,7 +504,15 @@ namespace MultiplayerARPG
             else
             {
                 if (equipWeaponSet >= selectableWeaponSets.Count)
-                    equipWeaponSet = (byte)(selectableWeaponSets.Count - 1);
+                {
+                    // Issues occuring, so try to simulate data
+                    // Create a new list to make sure that changes won't be applied to the source list (the source list must be readonly)
+                    selectableWeaponSets = new List<EquipWeapons>(selectableWeaponSets);
+                    while (equipWeaponSet >= selectableWeaponSets.Count)
+                    {
+                        selectableWeaponSets.Add(new EquipWeapons());
+                    }
+                }
                 SetClipBasedOnWeapon(selectableWeaponSets[equipWeaponSet]);
             }
         }

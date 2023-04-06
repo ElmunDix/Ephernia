@@ -12,8 +12,9 @@ namespace MultiplayerARPG
     {
         public BaseCharacterModel MainModel { get; set; }
         public bool IsMainModel { get { return MainModel == this; } }
-        public bool IsTpsModel { get; set; }
-        public bool IsFpsModel { get; set; }
+        public bool IsActiveModel { get; protected set; } = false;
+        public bool IsTpsModel { get; internal set; }
+        public bool IsFpsModel { get; internal set; }
 
         [Header("Model Switching Settings")]
         [SerializeField]
@@ -172,18 +173,23 @@ namespace MultiplayerARPG
 
             Manager = GetComponent<CharacterModelManager>();
             if (Manager == null)
-                Manager = GetComponentInParent<CharacterModelManager>();
-            // Can't find manager, this component may attached to non-character entities, so assume that this character model is main model
-            if (Manager == null)
-                MainModel = this;
-            else
-                CacheEntity = Manager.Entity;
+                Manager = GetComponentInParent<CharacterModelManager>(true);
 
-            if (IsMainModel)
+            // Can't find manager, this component may attached to non-character entities, so assume that this character model is main model
+            if (Manager != null)
+            {
+                CacheEntity = Manager.Entity;
+                Manager.InitTpsModel(this);
+            }
+            else
+            {
+                MainModel = this;
                 InitCacheData();
+                SwitchModel(null);
+            }
         }
 
-        public void InitCacheData()
+        internal void InitCacheData()
         {
             if (isCacheDataInitialized)
                 return;
@@ -266,29 +272,46 @@ namespace MultiplayerARPG
         {
             if (previousModel != null)
             {
+                previousModel.IsActiveModel = false;
                 previousModel.OnSwitchingToAnotherModel();
                 previousModel.RevertObjectsWhenSwitch();
-                SetIsDead(previousModel.isDead);
+                OnSwitchingToThisModel();
                 SetDefaultAnimations();
+                SetIsDead(previousModel.isDead);
+                SetMoveAnimationSpeedMultiplier(previousModel.moveAnimationSpeedMultiplier);
+                SetMovementState(previousModel.movementState, previousModel.extraMovementState, previousModel.direction2D, previousModel.isFreezeAnimation);
                 SetEquipWeapons(previousModel.selectableWeaponSets, previousModel.equipWeaponSet, previousModel.isWeaponsSheathed);
                 SetEquipItems(previousModel.equipItems);
                 SetBuffs(previousModel.buffs);
-                SetMoveAnimationSpeedMultiplier(previousModel.moveAnimationSpeedMultiplier);
-                SetMovementState(previousModel.movementState, previousModel.extraMovementState, previousModel.direction2D, previousModel.isFreezeAnimation);
+                IsActiveModel = true;
+                UpdateObjectsWhenSwitch();
+                OnSwitchedToThisModel();
+                previousModel.OnSwitchedToAnotherModel();
             }
             else
             {
+                OnSwitchingToThisModel();
                 SetDefaultAnimations();
                 SetEquipWeapons(selectableWeaponSets, equipWeaponSet, isWeaponsSheathed);
                 SetEquipItems(equipItems);
                 SetBuffs(buffs);
+                IsActiveModel = true;
+                UpdateObjectsWhenSwitch();
+                OnSwitchedToThisModel();
             }
-
-            UpdateObjectsWhenSwitch();
-            OnSwitchedToThisModel();
         }
 
         internal virtual void OnSwitchingToAnotherModel()
+        {
+
+        }
+
+        internal virtual void OnSwitchedToAnotherModel()
+        {
+
+        }
+
+        internal virtual void OnSwitchingToThisModel()
         {
 
         }
@@ -398,9 +421,23 @@ namespace MultiplayerARPG
             // Setup equipping models from equip weapons
             EquipWeapons equipWeapons;
             if (isWeaponsSheathed || selectableWeaponSets == null || selectableWeaponSets.Count == 0)
+            {
                 equipWeapons = new EquipWeapons();
+            }
             else
+            {
+                if (equipWeaponSet >= selectableWeaponSets.Count)
+                {
+                    // Issues occuring, so try to simulate data
+                    // Create a new list to make sure that changes won't be applied to the source list (the source list must be readonly)
+                    selectableWeaponSets = new List<EquipWeapons>(selectableWeaponSets);
+                    while (equipWeaponSet >= selectableWeaponSets.Count)
+                    {
+                        selectableWeaponSets.Add(new EquipWeapons());
+                    }
+                }
                 equipWeapons = selectableWeaponSets[equipWeaponSet];
+            }
             IEquipmentItem rightHandItem = equipWeapons.GetRightHandEquipmentItem();
             IEquipmentItem leftHandItem = equipWeapons.GetLeftHandEquipmentItem();
             if (rightHandItem != null && rightHandItem.IsWeapon())
@@ -535,7 +572,7 @@ namespace MultiplayerARPG
                         CacheEquipmentModelContainers[equipSocket] = CacheEquipmentModelContainers[model.equipSocket];
                 }
 
-                if (!showingModels.TryGetValue(equipSocket, out EquipmentModel storedModel) || storedModel.priority < model.priority || storedModel.itemLevel < itemLevel)
+                if (!storingModels.TryGetValue(equipSocket, out EquipmentModel storedModel) || storedModel.priority < model.priority || (storedModel.equipPosition == equipPosition && storedModel.itemLevel < itemLevel))
                 {
                     if (isSheathModels && model.useSpecificSheathEquipWeaponSet && model.specificSheathEquipWeaponSet != equipWeaponSet)
                     {

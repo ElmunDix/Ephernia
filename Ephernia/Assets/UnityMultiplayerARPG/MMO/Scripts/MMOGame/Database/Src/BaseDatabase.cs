@@ -77,7 +77,7 @@ namespace MultiplayerARPG.MMO
         public abstract void UpdateCharacterParty(string characterId, int partyId);
 
         public abstract int CreateGuild(string guildName, string leaderId);
-        public abstract GuildData ReadGuild(int id, GuildRoleData[] defaultGuildRoles);
+        public abstract GuildData ReadGuild(int id, IEnumerable<GuildRoleData> defaultGuildRoles);
         public abstract void UpdateGuildLevel(int id, int level, int exp, int skillPoint);
         public abstract void UpdateGuildLeader(int id, string leaderId);
         public abstract void UpdateGuildMessage(int id, string guildMessage);
@@ -86,7 +86,7 @@ namespace MultiplayerARPG.MMO
         public abstract void UpdateGuildOptions(int id, string options);
         public abstract void UpdateGuildAutoAcceptRequests(int id, bool autoAcceptRequests);
         public abstract void UpdateGuildRank(int id, int rank);
-        public abstract void UpdateGuildRole(int id, byte guildRole, string name, bool canInvite, bool canKick, byte shareExpPercentage);
+        public abstract void UpdateGuildRole(int id, byte guildRole, GuildRoleData guildRoleData);
         public abstract void UpdateGuildMemberRole(string characterId, byte guildRole);
         public abstract void UpdateGuildSkillLevel(int id, int dataId, int skillLevel, int skillPoint);
         public abstract void DeleteGuild(int id);

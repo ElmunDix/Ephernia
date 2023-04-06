@@ -2,10 +2,8 @@
 
 namespace MultiplayerARPG.MMO
 {
-    public struct GetUserLevelResp : INetSerializable
+    public partial struct GetUserLevelResp : INetSerializable
     {
-        public byte UserLevel { get; set; }
-
         public void Deserialize(NetDataReader reader)
         {
             UserLevel = reader.GetByte();

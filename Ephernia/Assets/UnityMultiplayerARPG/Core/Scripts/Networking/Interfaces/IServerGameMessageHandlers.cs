@@ -5,10 +5,10 @@ namespace MultiplayerARPG
     public partial interface IServerGameMessageHandlers
     {
         void SendGameMessage(long connectionId, UITextKeys message);
-        void NotifyRewardExp(long connectionId, int exp);
-        void NotifyRewardGold(long connectionId, int gold);
-        void NotifyRewardItem(long connectionId, int dataId, int amount);
-        void NotifyRewardCurrency(long connectionId, int dataId, int amount);
+        void NotifyRewardExp(long connectionId, RewardGivenType givenType, int exp);
+        void NotifyRewardGold(long connectionId, RewardGivenType givenType, int gold);
+        void NotifyRewardItem(long connectionId, RewardGivenType givenType, int dataId, int amount);
+        void NotifyRewardCurrency(long connectionId, RewardGivenType givenType, int dataId, int amount);
         // Storage
         void NotifyStorageItems(long connectionId, List<CharacterItem> storageItems);
         void NotifyStorageOpened(long connectionId, StorageType storageType, string storageOwnerId, uint objectId, int weightLimit, int slotLimit);
@@ -31,7 +31,7 @@ namespace MultiplayerARPG
         void SendSetGuildAutoAcceptRequests(long connectionId, int id, bool autoAcceptRequests);
         void SendSetGuildScore(long connectionId, int id, int score);
         void SendSetGuildRank(long connectionId, int id, int rank);
-        void SendSetGuildRole(long connectionId, int id, byte guildRole, string roleName, bool canInvite, bool canKick, byte shareExpPercentage);
+        void SendSetGuildRole(long connectionId, int id, byte guildRole, GuildRoleData guildRoleData);
         void SendSetGuildMemberRole(long connectionId, int id, string characterId, byte guildRole);
         void SendClearGuildData(long connectionId, int id);
         void SendAddGuildMember(long connectionId, int id, SocialCharacterData member);

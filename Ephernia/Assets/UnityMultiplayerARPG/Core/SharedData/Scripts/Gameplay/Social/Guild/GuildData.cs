@@ -59,7 +59,7 @@ namespace MultiplayerARPG
             this.id = id;
         }
 
-        public GuildData(int id, string guildName, string leaderId, GuildRoleData[] roles)
+        public GuildData(int id, string guildName, string leaderId, IEnumerable<GuildRoleData> roles)
             : this(id, leaderId)
         {
             this.guildName = guildName;
@@ -147,9 +147,9 @@ namespace MultiplayerARPG
             if (!IsRoleAvailable(guildRole))
             {
                 if (guildRole == LeaderRole)
-                    return new GuildRoleData() { roleName = "Master", canInvite = true, canKick = true };
+                    return new GuildRoleData() { roleName = "Master", canInvite = true, canKick = true, canUseStorage = true };
                 else
-                    return new GuildRoleData() { roleName = "Member", canInvite = false, canKick = false };
+                    return new GuildRoleData() { roleName = "Member", canInvite = false, canKick = false, canUseStorage = false };
             }
             return roles[guildRole];
         }
@@ -202,6 +202,33 @@ namespace MultiplayerARPG
         {
             skillLevels[dataId] = level;
             isCached = false;
+        }
+
+        public bool IncreaseGuildExp(
+            int[] expTree,
+            int increasingExp)
+        {
+            exp += increasingExp;
+            bool isLevelUp = false;
+            int nextLevelExp = GetNextLevelExp(expTree, level);
+            while (nextLevelExp > 0 && exp >= nextLevelExp)
+            {
+                exp = exp - nextLevelExp;
+                ++level;
+                nextLevelExp = GetNextLevelExp(expTree, level);
+                skillPoint += 1;
+                isLevelUp = true;
+            }
+            return isLevelUp;
+        }
+
+        public int GetNextLevelExp(int[] expTree, int level)
+        {
+            if (level <= 0)
+                return 0;
+            if (level > expTree.Length)
+                return 0;
+            return expTree[level - 1];
         }
     }
 }

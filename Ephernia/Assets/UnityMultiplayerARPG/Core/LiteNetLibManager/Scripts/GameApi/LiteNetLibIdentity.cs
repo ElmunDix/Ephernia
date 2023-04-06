@@ -435,31 +435,43 @@ namespace LiteNetLibManager
             return behaviour != null;
         }
 
-        internal void WriteInitialSyncFields(NetDataWriter writer)
+        /// <summary>
+        /// This function will be called when send networked object spawning message, to write sync field data
+        /// </summary>
+        /// <param name="writer"></param>
+        internal void WriteInitSyncFields(NetDataWriter writer)
         {
             foreach (LiteNetLibSyncField field in SyncFields)
             {
-                if (field.doNotSyncInitialDataImmediately)
+                if (field.HasSyncBehaviourFlag(LiteNetLibSyncField.SyncBehaviour.DoNotSyncInitialDataImmediately))
                     continue;
                 field.Serialize(writer);
             }
         }
 
-        internal void ReadInitialSyncFields(NetDataReader reader)
+        /// <summary>
+        /// This function will be called when receive networked object spawning message, to read sync field data
+        /// </summary>
+        /// <param name="reader"></param>
+        internal void ReadInitSyncFields(NetDataReader reader)
         {
             foreach (LiteNetLibSyncField field in SyncFields)
             {
-                if (field.doNotSyncInitialDataImmediately)
+                if (field.HasSyncBehaviourFlag(LiteNetLibSyncField.SyncBehaviour.DoNotSyncInitialDataImmediately))
                     continue;
                 field.Deserialize(reader, true);
             }
         }
 
+        /// <summary>
+        /// This function will be called after networked object spawning message was sent
+        /// </summary>
+        /// <param name="connectionId"></param>
         internal void SendInitSyncFields(long connectionId)
         {
             foreach (LiteNetLibSyncField field in SyncFields)
             {
-                if (!field.doNotSyncInitialDataImmediately)
+                if (!field.HasSyncBehaviourFlag(LiteNetLibSyncField.SyncBehaviour.DoNotSyncInitialDataImmediately))
                     continue;
                 field.SendUpdate(true, connectionId);
             }
@@ -811,6 +823,12 @@ namespace LiteNetLibManager
 
         internal void OnGetInstance()
         {
+            ResetSyncData();
+            onGetInstance.Invoke();
+        }
+
+        internal void ResetSyncData()
+        {
             // Clear/reset syncing data
             foreach (LiteNetLibSyncField field in SyncFields)
             {
@@ -820,7 +838,6 @@ namespace LiteNetLibManager
             {
                 list.Reset();
             }
-            onGetInstance.Invoke();
         }
     }
 }

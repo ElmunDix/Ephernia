@@ -2,10 +2,8 @@
 
 namespace MultiplayerARPG.MMO
 {
-    public struct ReadGuildReq : INetSerializable
+    public partial struct ReadGuildReq : INetSerializable
     {
-        public int GuildId { get; set; }
-
         public void Deserialize(NetDataReader reader)
         {
             GuildId = reader.GetInt();

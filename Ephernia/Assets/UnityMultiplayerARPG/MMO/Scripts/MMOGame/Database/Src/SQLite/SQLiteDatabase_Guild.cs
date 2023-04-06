@@ -3,6 +3,7 @@ using Microsoft.Data.Sqlite;
 #elif (UNITY_EDITOR || UNITY_SERVER) && UNITY_STANDALONE
 using Mono.Data.Sqlite;
 #endif
+using System.Collections.Generic;
 
 #if NET || NETCOREAPP || ((UNITY_EDITOR || UNITY_SERVER) && UNITY_STANDALONE)
 namespace MultiplayerARPG.MMO
@@ -30,7 +31,7 @@ namespace MultiplayerARPG.MMO
             return id;
         }
 
-        public override GuildData ReadGuild(int id, GuildRoleData[] defaultGuildRoles)
+        public override GuildData ReadGuild(int id, IEnumerable<GuildRoleData> defaultGuildRoles)
         {
             GuildData result = null;
             ExecuteReader((reader) =>
@@ -68,10 +69,11 @@ namespace MultiplayerARPG.MMO
                         guildRoleData.roleName = reader.GetString(1);
                         guildRoleData.canInvite = reader.GetBoolean(2);
                         guildRoleData.canKick = reader.GetBoolean(3);
-                        guildRoleData.shareExpPercentage = reader.GetByte(4);
+                        guildRoleData.canUseStorage = reader.GetBoolean(4);
+                        guildRoleData.shareExpPercentage = reader.GetByte(5);
                         result.SetRole(guildRole, guildRoleData);
                     }
-                }, "SELECT guildRole, name, canInvite, canKick, shareExpPercentage FROM guildrole WHERE guildId=@id",
+                }, "SELECT guildRole, name, canInvite, canKick, canUseStorage, shareExpPercentage FROM guildrole WHERE guildId=@id",
                     new SqliteParameter("@id", id));
                 // Guild members
                 ExecuteReader((reader) =>
@@ -164,19 +166,20 @@ namespace MultiplayerARPG.MMO
                 new SqliteParameter("@id", id));
         }
 
-        public override void UpdateGuildRole(int id, byte guildRole, string name, bool canInvite, bool canKick, byte shareExpPercentage)
+        public override void UpdateGuildRole(int id, byte guildRole, GuildRoleData guildRoleData)
         {
             ExecuteNonQuery("DELETE FROM guildrole WHERE guildId=@guildId AND guildRole=@guildRole",
                 new SqliteParameter("@guildId", id),
                 new SqliteParameter("@guildRole", guildRole));
-            ExecuteNonQuery("INSERT INTO guildrole (guildId, guildRole, name, canInvite, canKick, shareExpPercentage) " +
-                "VALUES (@guildId, @guildRole, @name, @canInvite, @canKick, @shareExpPercentage)",
+            ExecuteNonQuery("INSERT INTO guildrole (guildId, guildRole, name, canInvite, canKick, canUseStorage, shareExpPercentage) " +
+                "VALUES (@guildId, @guildRole, @name, @canInvite, @canKick, @canUseStorage, @shareExpPercentage)",
                 new SqliteParameter("@guildId", id),
                 new SqliteParameter("@guildRole", guildRole),
-                new SqliteParameter("@name", name),
-                new SqliteParameter("@canInvite", canInvite),
-                new SqliteParameter("@canKick", canKick),
-                new SqliteParameter("@shareExpPercentage", shareExpPercentage));
+                new SqliteParameter("@name", guildRoleData.roleName),
+                new SqliteParameter("@canInvite", guildRoleData.canInvite),
+                new SqliteParameter("@canKick", guildRoleData.canKick),
+                new SqliteParameter("@canUseStorage", guildRoleData.canUseStorage),
+                new SqliteParameter("@shareExpPercentage", guildRoleData.shareExpPercentage));
         }
 
         public override void UpdateGuildMemberRole(string characterId, byte guildRole)

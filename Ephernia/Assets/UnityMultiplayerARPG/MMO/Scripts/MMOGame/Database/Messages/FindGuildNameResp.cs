@@ -2,10 +2,8 @@
 
 namespace MultiplayerARPG.MMO
 {
-    public struct FindGuildNameResp : INetSerializable
+    public partial struct FindGuildNameResp : INetSerializable
     {
-        public long FoundAmount { get; set; }
-
         public void Deserialize(NetDataReader reader)
         {
             FoundAmount = reader.GetLong();

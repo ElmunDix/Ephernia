@@ -2,10 +2,8 @@
 
 namespace MultiplayerARPG.MMO
 {
-    public struct GetSummonBuffsReq : INetSerializable
+    public partial struct GetSummonBuffsReq : INetSerializable
     {
-        public string CharacterId { get; set; }
-
         public void Deserialize(NetDataReader reader)
         {
             CharacterId = reader.GetString();

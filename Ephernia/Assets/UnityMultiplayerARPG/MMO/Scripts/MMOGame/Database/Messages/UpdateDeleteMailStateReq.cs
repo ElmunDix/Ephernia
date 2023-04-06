@@ -2,11 +2,8 @@
 
 namespace MultiplayerARPG.MMO
 {
-    public struct UpdateDeleteMailStateReq : INetSerializable
+    public partial struct UpdateDeleteMailStateReq : INetSerializable
     {
-        public string MailId { get; set; }
-        public string UserId { get; set; }
-
         public void Deserialize(NetDataReader reader)
         {
             MailId = reader.GetString();

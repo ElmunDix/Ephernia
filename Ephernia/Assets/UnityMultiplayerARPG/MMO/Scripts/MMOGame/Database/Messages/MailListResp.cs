@@ -1,12 +1,9 @@
 ﻿using LiteNetLib.Utils;
-using System.Collections.Generic;
 
 namespace MultiplayerARPG.MMO
 {
-    public struct MailListResp : INetSerializable
+    public partial struct MailListResp : INetSerializable
     {
-        public List<MailListEntry> List { get; set; }
-
         public void Deserialize(NetDataReader reader)
         {
             List = reader.GetList<MailListEntry>();

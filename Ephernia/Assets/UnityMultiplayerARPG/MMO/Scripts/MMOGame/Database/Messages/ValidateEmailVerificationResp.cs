@@ -2,10 +2,8 @@
 
 namespace MultiplayerARPG.MMO
 {
-    public struct ValidateEmailVerificationResp : INetSerializable
+    public partial struct ValidateEmailVerificationResp : INetSerializable
     {
-        public bool IsPass { get; set; }
-
         public void Deserialize(NetDataReader reader)
         {
             IsPass = reader.GetBool();

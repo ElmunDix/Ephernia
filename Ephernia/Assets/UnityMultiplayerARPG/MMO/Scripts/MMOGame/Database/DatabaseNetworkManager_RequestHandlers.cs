@@ -1,5 +1,7 @@
-﻿using Cysharp.Threading.Tasks;
+﻿using ConcurrentCollections;
+using Cysharp.Threading.Tasks;
 using LiteNetLibManager;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,6 +10,28 @@ namespace MultiplayerARPG.MMO
 {
     public partial class DatabaseNetworkManager
     {
+
+#if (UNITY_EDITOR || UNITY_SERVER) && UNITY_STANDALONE
+        // TODO: I'm going to make in-memory database without Redis for now
+        // In the future it may implements Redis
+        // It's going to get some data from all tables but not every records
+        // Just some records that players were requested
+        private ConcurrentHashSet<string> cachedUsernames = new ConcurrentHashSet<string>(StringComparer.OrdinalIgnoreCase);
+        private ConcurrentHashSet<string> cachedEmails = new ConcurrentHashSet<string>(StringComparer.OrdinalIgnoreCase);
+        private ConcurrentHashSet<string> cachedCharacterNames = new ConcurrentHashSet<string>(StringComparer.OrdinalIgnoreCase);
+        private ConcurrentHashSet<string> cachedGuildNames = new ConcurrentHashSet<string>(StringComparer.OrdinalIgnoreCase);
+        private ConcurrentDictionary<string, string> cachedUserAccessToken = new ConcurrentDictionary<string, string>();
+        private ConcurrentDictionary<string, int> cachedUserGold = new ConcurrentDictionary<string, int>();
+        private ConcurrentDictionary<string, int> cachedUserCash = new ConcurrentDictionary<string, int>();
+        private ConcurrentDictionary<string, PlayerCharacterData> cachedUserCharacter = new ConcurrentDictionary<string, PlayerCharacterData>();
+        private ConcurrentDictionary<string, SocialCharacterData> cachedSocialCharacter = new ConcurrentDictionary<string, SocialCharacterData>();
+        private ConcurrentDictionary<string, ConcurrentDictionary<string, BuildingSaveData>> cachedBuilding = new ConcurrentDictionary<string, ConcurrentDictionary<string, BuildingSaveData>>();
+        private ConcurrentDictionary<int, PartyData> cachedParty = new ConcurrentDictionary<int, PartyData>();
+        private ConcurrentDictionary<int, GuildData> cachedGuild = new ConcurrentDictionary<int, GuildData>();
+        private ConcurrentDictionary<StorageId, List<CharacterItem>> cachedStorageItems = new ConcurrentDictionary<StorageId, List<CharacterItem>>();
+        private ConcurrentDictionary<StorageId, long> updatingStorages = new ConcurrentDictionary<StorageId, long>();
+#endif
+
         protected async UniTaskVoid ValidateUserLogin(RequestHandlerData requestHandler, ValidateUserLoginReq request, RequestProceedResultDelegate<ValidateUserLoginResp> result)
         {
 #if (UNITY_EDITOR || UNITY_SERVER) && UNITY_STANDALONE
@@ -687,10 +711,10 @@ namespace MultiplayerARPG.MMO
                 return;
             }
             // Update to cache
-            guild.SetRole(request.GuildRole, request.RoleName, request.CanInvite, request.CanKick, request.ShareExpPercentage);
+            guild.SetRole(request.GuildRole, request.GuildRoleData);
             cachedGuild[request.GuildId] = guild;
             // Update to
-            Database.UpdateGuildRole(request.GuildId, request.GuildRole, request.RoleName, request.CanInvite, request.CanKick, request.ShareExpPercentage);
+            Database.UpdateGuildRole(request.GuildId, request.GuildRole, request.GuildRoleData);
             result.InvokeSuccess(new GuildResp()
             {
                 GuildData = guild
@@ -837,7 +861,7 @@ namespace MultiplayerARPG.MMO
                 return;
             }
             await UniTask.SwitchToMainThread();
-            guild = GameInstance.Singleton.SocialSystemSetting.IncreaseGuildExp(guild, request.Exp);
+            guild.IncreaseGuildExp(GameInstance.Singleton.SocialSystemSetting.GuildExpTree, request.Exp);
             // Update to cache
             cachedGuild.TryAdd(guild.id, guild);
             // Update to database
@@ -931,8 +955,8 @@ namespace MultiplayerARPG.MMO
             StorageId storageId = new StorageId(request.StorageType, request.StorageOwnerId);
             if (request.ReadForUpdate)
             {
-                float time = Time.unscaledTime;
-                if (updatingStorages.TryGetValue(storageId, out float oldTime) && time - oldTime < 0.5f)
+                long time = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+                if (updatingStorages.TryGetValue(storageId, out long oldTime) && time - oldTime < 500)
                 {
                     // Not allow to update yet
                     result.InvokeError(new ReadStorageItemsResp());
@@ -953,8 +977,8 @@ namespace MultiplayerARPG.MMO
         {
 #if (UNITY_EDITOR || UNITY_SERVER) && UNITY_STANDALONE
             StorageId storageId = new StorageId(request.StorageType, request.StorageOwnerId);
-            float time = Time.unscaledTime;
-            if (updatingStorages.TryGetValue(storageId, out float oldTime) && time - oldTime >= 0.5f)
+            long time = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+            if (updatingStorages.TryGetValue(storageId, out long oldTime) && time - oldTime >= 500)
             {
                 // Timeout
                 result.InvokeError(EmptyMessage.Value);

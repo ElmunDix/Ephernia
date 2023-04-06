@@ -2,21 +2,18 @@
 
 namespace MultiplayerARPG.MMO
 {
-    public struct UpdateClaimMailItemsStateResp : INetSerializable
+    public partial struct UpdateClaimMailItemsStateResp : INetSerializable
     {
-        public UITextKeys Error { get; set; }
-        public Mail Mail { get; set; }
-
         public void Deserialize(NetDataReader reader)
         {
             Error = (UITextKeys)reader.GetByte();
-            Mail = reader.GetValue<Mail>();
+            Mail = reader.Get(() => new Mail());
         }
 
         public void Serialize(NetDataWriter writer)
         {
             writer.Put((byte)Error);
-            writer.PutValue(Mail);
+            writer.Put(Mail);
         }
     }
 }

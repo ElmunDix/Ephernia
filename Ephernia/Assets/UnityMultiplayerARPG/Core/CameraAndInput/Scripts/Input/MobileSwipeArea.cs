@@ -1,9 +1,8 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class MobileSwipeArea : MonoBehaviour, IMobileInputArea
+public class MobileSwipeArea : MonoBehaviour, IMobileInputArea, IPointerDownHandler, IDragHandler, IPointerUpHandler
 {
     public bool useAxisX = true;
     public bool useAxisY = true;
@@ -13,125 +12,85 @@ public class MobileSwipeArea : MonoBehaviour, IMobileInputArea
     private float xSensitivity = 1f;
     [SerializeField]
     private float ySensitivity = 1f;
+    [SerializeField]
+    private bool interactable = true;
 
-    public bool IsDragging
+    public bool Interactable
     {
-        get; private set;
+        get { return interactable; }
+        set { interactable = value; }
     }
 
-    private Graphic graphic;
-    private Vector2 previousTouchPosition;
-    private List<Touch> touches = new List<Touch>();
-    private List<RaycastResult> raycastResults = new List<RaycastResult>();
+    private bool _isSwiping;
+    public bool IsSwiping
+    {
+        get => _isSwiping && Interactable; private set => _isSwiping = value;
+    }
+
+    private Graphic _graphic;
+    private Vector2? _previousTouchPosition;
+    private PointerEventData _previousPointer;
+    private int _lastDragFrame;
 
     private void Awake()
     {
-        graphic = GetComponent<Graphic>();
-        graphic.raycastTarget = true;
+        _graphic = GetComponent<Graphic>();
+        _graphic.raycastTarget = true;
     }
 
     private void OnDisable()
     {
-        UpdateVirtualAxes(Vector2.zero);
+        OnPointerUp(null);
     }
 
-    public void Update()
+    public void OnPointerDown(PointerEventData eventData)
     {
-        if (Application.isMobilePlatform)
-            UpdateMobile();
-        else if (!Application.isConsolePlatform)
-            UpdateStandalone();
-    }
-
-    private void UpdateStandalone()
-    {
-        PointerEventData tempPointer;
-        bool hasPointer = false;
-        tempPointer = new PointerEventData(EventSystem.current);
-        tempPointer.position = InputManager.MousePosition();
-        EventSystem.current.RaycastAll(tempPointer, raycastResults);
-        if (raycastResults != null && raycastResults.Count > 0)
-        {
-            if (raycastResults[0].gameObject == gameObject)
-            {
-                if (!IsDragging && Input.GetMouseButton(0))
-                {
-                    OnPointerDown(InputManager.MousePosition());
-                    return;
-                }
-                hasPointer = true;
-            }
-        }
-
-        if (!hasPointer || !Input.GetMouseButton(0))
-        {
-            if (IsDragging)
-                OnPointerUp();
+        if (InputManager.touchedPointerIds.TryGetValue(eventData.pointerId, out GameObject touchedObject) && touchedObject != gameObject)
             return;
-        }
-
-        if (hasPointer)
-            OnDrag(InputManager.MousePosition());
-    }
-
-    private void UpdateMobile()
-    {
-        PointerEventData tempPointer;
-        touches.Clear();
-        for (int i = 0; i < Input.touchCount; ++i)
-        {
-            tempPointer = new PointerEventData(EventSystem.current);
-            tempPointer.position = Input.touches[i].position;
-            EventSystem.current.RaycastAll(tempPointer, raycastResults);
-            if (raycastResults != null && raycastResults.Count == 1)
-            {
-                if (raycastResults[0].gameObject == gameObject &&
-                    !MobileMovementJoystick.JoystickTouches.Contains(Input.touches[i].fingerId))
-                    touches.Add(Input.touches[i]);
-            }
-        }
-
-        if (touches.Count != 1)
-        {
-            if (IsDragging)
-                OnPointerUp();
+        if (_previousPointer != null)
             return;
-        }
-
-        if (touches[0].phase == TouchPhase.Began && !IsDragging)
-            OnPointerDown(touches[0].position);
-
-        if (touches[0].phase == TouchPhase.Moved ||
-            touches[0].phase == TouchPhase.Stationary)
-            OnDrag(touches[0].position);
+        _previousPointer = eventData;
+        _previousTouchPosition = null;
+        IsSwiping = true;
     }
 
-    private void OnPointerDown(Vector2 pointerPosition)
+    public void OnDrag(PointerEventData eventData)
     {
-        IsDragging = true;
-        previousTouchPosition = pointerPosition;
-        UpdateVirtualAxes(Vector2.zero);
-    }
-
-    private void OnPointerUp()
-    {
-        IsDragging = false;
-        UpdateVirtualAxes(Vector2.zero);
-    }
-
-    private void OnDrag(Vector2 pointerPosition)
-    {
-        if (!IsDragging)
+        if (_previousPointer == null || _previousPointer.pointerId != eventData.pointerId)
             return;
-        Vector2 pointerDelta = pointerPosition - previousTouchPosition;
-        // Set previous touch position to use next frame
-        previousTouchPosition = pointerPosition;
-        // Update virtual axes
+        _previousPointer = eventData;
+        if (!_previousTouchPosition.HasValue)
+            _previousTouchPosition = eventData.position;
+        // Use previous position to find delta from last frame
+        Vector2 pointerDelta = eventData.position - _previousTouchPosition.Value;
+        // Set position to use next frame
+        _previousTouchPosition = eventData.position;
         UpdateVirtualAxes(new Vector2(pointerDelta.x * xSensitivity, pointerDelta.y * ySensitivity) * Time.deltaTime * 100f);
+        // Update dragging state
+        InputManager.UpdateMobileInputDragging();
+        _lastDragFrame = Time.frameCount;
+    }
+
+    private void Update()
+    {
+        if (Time.frameCount > _lastDragFrame && _previousPointer != null)
+            OnDrag(_previousPointer);
+    }
+
+    public void OnPointerUp(PointerEventData eventData)
+    {
+        if (_previousPointer != null && eventData != null && _previousPointer.pointerId != eventData.pointerId)
+            return;
+        IsSwiping = false;
+        _previousPointer = null;
+        UpdateVirtualAxes(Vector2.zero);
     }
 
     public void UpdateVirtualAxes(Vector2 value)
     {
+        if (!Interactable)
+            value = Vector2.zero;
+
         if (useAxisX)
             InputManager.SetAxis(axisXName, value.x);
 

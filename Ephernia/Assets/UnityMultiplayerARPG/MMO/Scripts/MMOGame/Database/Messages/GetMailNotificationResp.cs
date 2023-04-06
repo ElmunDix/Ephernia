@@ -2,10 +2,8 @@
 
 namespace MultiplayerARPG.MMO
 {
-    public struct GetMailNotificationResp : INetSerializable
+    public partial struct GetMailNotificationResp : INetSerializable
     {
-        public int NotificationCount { get; set; }
-
         public void Deserialize(NetDataReader reader)
         {
             NotificationCount = reader.GetInt();

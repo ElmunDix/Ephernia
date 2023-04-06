@@ -2,11 +2,8 @@
 
 namespace MultiplayerARPG.MMO
 {
-    public struct ChangeCashReq : INetSerializable
+    public partial struct ChangeCashReq : INetSerializable
     {
-        public string UserId { get; set; }
-        public int ChangeAmount { get; set; }
-
         public void Deserialize(NetDataReader reader)
         {
             UserId = reader.GetString();

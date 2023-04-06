@@ -82,20 +82,6 @@ namespace MultiplayerARPG
             AddMember(CreateMemberData(playerCharacterEntity), guildRole);
         }
 
-        public void SetRole(byte guildRole, string roleName, bool canInvite, bool canKick, byte shareExpPercentage)
-        {
-            if (shareExpPercentage > SystemSetting.MaxShareExpPercentage)
-                shareExpPercentage = SystemSetting.MaxShareExpPercentage;
-
-            SetRole(guildRole, new GuildRoleData()
-            {
-                roleName = roleName,
-                canInvite = canInvite,
-                canKick = canKick,
-                shareExpPercentage = shareExpPercentage,
-            });
-        }
-
         public void GetSortedMembers(out SocialCharacterData[] sortedMembers, out byte[] sortedMemberRoles)
         {
             int i = 0;
@@ -176,6 +162,11 @@ namespace MultiplayerARPG
             return GetRole(GetMemberRole(characterId)).canKick;
         }
 
+        public bool CanUseStorage(string characterId)
+        {
+            return GetRole(GetMemberRole(characterId)).canUseStorage;
+        }
+
         public byte ShareExpPercentage(string characterId)
         {
             return GetRole(GetMemberRole(characterId)).shareExpPercentage;
@@ -183,7 +174,7 @@ namespace MultiplayerARPG
 
         public int GetNextLevelExp()
         {
-            return SystemSetting.GetNextLevelExp(level);
+            return GetNextLevelExp(SystemSetting.GuildExpTree, level);
         }
 
         public override void Serialize(NetDataWriter writer)

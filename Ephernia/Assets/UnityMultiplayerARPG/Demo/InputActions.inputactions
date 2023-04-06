@@ -42,6 +42,42 @@
                     "initialStateCheck": false
                 },
                 {
+                    "name": "FindEnemy",
+                    "type": "Button",
+                    "id": "d13a5166-9cb6-4ea2-811c-a5022fdcd01e",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Reload",
+                    "type": "Button",
+                    "id": "9398d3e9-813f-449d-9506-04bbb816198c",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "ExitVehicle",
+                    "type": "Button",
+                    "id": "c4b68ab9-bd27-400a-890b-b7067b298748",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "SwitchEquipWeaponSet",
+                    "type": "Button",
+                    "id": "a511cfca-629a-4a69-ae30-9337fd93eb7e",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
                     "name": "Crouch",
                     "type": "Button",
                     "id": "1ac9bd59-f20d-4d21-991d-691e72ecaf81",
@@ -135,6 +171,24 @@
                     "name": "PickUpItem",
                     "type": "Button",
                     "id": "b0e3c953-0e97-410c-a144-51674c594c08",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "RotateLeft",
+                    "type": "Button",
+                    "id": "a5a8a488-85af-46ff-9b9b-e926cedd6880",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "RotateRight",
+                    "type": "Button",
+                    "id": "38411bf3-8049-4ee7-9c55-b41f6b801d4a",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
@@ -779,6 +833,72 @@
                     "processors": "",
                     "groups": "",
                     "action": "HotkeyR2",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "49bd12a8-69e0-4881-9556-4d9fb22e009c",
+                    "path": "<Keyboard>/x",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "ExitVehicle",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "6abc6368-f7a2-4d50-bb2c-dc4463b8920b",
+                    "path": "<Keyboard>/r",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Reload",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "4d4bc70c-acf1-40ca-b9fd-e804fe801593",
+                    "path": "<Keyboard>/tab",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "FindEnemy",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "c046f42b-1c54-4ee7-b177-19683549a72d",
+                    "path": "<Keyboard>/backquote",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "SwitchEquipWeaponSet",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "ae2edea8-a5a1-4112-9adb-0a3f08317e92",
+                    "path": "<Keyboard>/j",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "RotateLeft",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "b9a0f87e-ed1b-4ffe-b987-b9d74a9dab9d",
+                    "path": "<Keyboard>/k",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "RotateRight",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

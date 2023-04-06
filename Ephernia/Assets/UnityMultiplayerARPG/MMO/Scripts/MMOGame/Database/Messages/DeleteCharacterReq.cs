@@ -2,11 +2,8 @@
 
 namespace MultiplayerARPG.MMO
 {
-    public struct DeleteCharacterReq : INetSerializable
+    public partial struct DeleteCharacterReq : INetSerializable
     {
-        public string UserId { get; set; }
-        public string CharacterId { get; set; }
-
         public void Deserialize(NetDataReader reader)
         {
             UserId = reader.GetString();

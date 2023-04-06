@@ -2,10 +2,8 @@
 
 namespace MultiplayerARPG.MMO
 {
-    public struct GetUserUnbanTimeReq : INetSerializable
+    public partial struct GetUserUnbanTimeReq : INetSerializable
     {
-        public string UserId { get; set; }
-
         public void Deserialize(NetDataReader reader)
         {
             UserId = reader.GetString();

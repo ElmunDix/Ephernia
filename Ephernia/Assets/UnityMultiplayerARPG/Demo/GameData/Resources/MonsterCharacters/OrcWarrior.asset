@@ -44,6 +44,7 @@ MonoBehaviour:
       slotLimit: 0
       goldRate: 0
       expRate: 0
+      itemDropRate: 0
       testStat1: 0
     statsIncreaseEachLevel:
       hp: 0
@@ -69,6 +70,7 @@ MonoBehaviour:
       slotLimit: 0
       goldRate: 0
       expRate: 0
+      itemDropRate: 0
       testStat1: 0
     statsIncreaseEachLevelByLevels: []
   attributes:
@@ -138,6 +140,7 @@ MonoBehaviour:
         slotLimit: 0
         goldRate: 0
         expRate: 0
+        itemDropRate: 0
         testStat1: 0
       statsIncreaseEachLevel:
         hp: 0
@@ -163,6 +166,7 @@ MonoBehaviour:
         slotLimit: 0
         goldRate: 0
         expRate: 0
+        itemDropRate: 0
         testStat1: 0
       statsIncreaseEachLevelByLevels: []
     increaseStatsRate:
@@ -190,6 +194,7 @@ MonoBehaviour:
         slotLimit: 0
         goldRate: 0
         expRate: 0
+        itemDropRate: 0
         testStat1: 0
       statsIncreaseEachLevel:
         hp: 0
@@ -215,6 +220,7 @@ MonoBehaviour:
         slotLimit: 0
         goldRate: 0
         expRate: 0
+        itemDropRate: 0
         testStat1: 0
       statsIncreaseEachLevelByLevels: []
     increaseAttributes: []
